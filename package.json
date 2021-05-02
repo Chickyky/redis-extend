@@ -1,0 +1,34 @@
+{
+  "name": "redis-extend",
+  "version": "1.0.0",
+  "description": "support some function like expire field in hash set",
+  "main": "redis-extend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/Chickyky/redis-extend.git"
+  },
+  "keywords": [
+    "redis",
+    "ioredis",
+    "expire",
+    "field",
+    "in",
+    "hash",
+    "key"
+  ],
+  "author": "Chickyky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Chickyky/redis-extend/issues"
+  },
+  "homepage": "https://github.com/Chickyky/redis-extend#readme",
+  "dependencies": {
+    "async": "^3.2.0",
+    "debug": "^4.3.1",
+    "ioredis": "^4.27.1",
+    "lodash": "^4.17.21"
+  }
+}
