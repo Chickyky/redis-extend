@@ -1,10 +1,10 @@
 {
   "name": "redis-extend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "support some function like expire field in hash set",
   "main": "redis-extend.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand --detectOpenHandles --forceExit --collect-coverage"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,12 @@
   "dependencies": {
     "async": "^3.2.0",
     "debug": "^4.3.1",
+    "flat": "^5.0.2",
     "ioredis": "^4.27.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "matcher": "^4.0.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
   }
 }

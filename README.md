@@ -3,9 +3,21 @@ Extend some function utility for redis client.
 Somehow solve the problem expire field in hash/member in hash/set/sorted-set.
 
 > example issue:
-  issue since 2011 [Implement Expire on hash](https://github.com/redis/redis/issues/167)
-  issue since 2013 [Allow to set an expiration on hash field](https://github.com/redis/redis/issues/1042)
+  issue since 2011 [Implement Expire on hash](https://github.com/redis/redis/issues/167) <br>
+  issue since 2013 [Allow to set an expiration on hash field](https://github.com/redis/redis/issues/1042) <br>
   etc ...
+
+# Report Bug
+All bugs please create issue on github or send to my email `Chickyky@gmail`
+
+# Test
+```shell
+$ npm run test
+```
+See file test for example and run cmd for test.
+Image result test:
+![Image result test]( https://i.imgur.com/cZuZoX7.png)
+
 # Features
 Extend from [ioredis](https://www.npmjs.com/package/ioredis) then create new Redis client with all feature of [ioredis](https://www.npmjs.com/package/ioredis) and add some function helper like **hexpire/sexpire/zexpire/**...
 
@@ -153,6 +165,138 @@ Return TTL (Time ti live) in seconds, or a negative value in order to signal an 
 
 ### hpttl (key, field[, callback])  <br> spttl (key, member[, callback]) <br> zpttl (key, member[, callback])
 same httt/sttl/ztt/ but Return TTL  in milliseconds.
+
+### pdel(pattern[, callback]) <br> pdel(pattern[, options, callback])
+Batch delete keys by pattern.
+
+options:
+- `count (number)`: limit each delete batch, default `10`.
+- `type (enum string)`: `string/hash/set/zset` delete with type of key which you want, default is delete all type.
+
+### hpdel(key, pattern[, callback]) <br> hpdel(key, pattern[, options, callback]) <br> spdel(key, pattern[, callback]) <br> spdel(key, pattern[, options, callback]) <br> zpdel(key, pattern[, callback]) <br> zpdel(key, pattern[, options, callback])
+Like `pdel` but delete `fields/members` in `hash/set/zset`
+options:
+- `count (number)`: limit each delete batch, default `10`.
+
+### jset(key, json[, callback])
+Set Nested JSON into hash with your `key`.
+> Note: type of field is `primitive type`:
+> - string
+> - number
+> - boolean
+> - null
+> - undefined
+> - instance of Date
+
+### jget(key[, callback])
+Get Nested JSON with your `key` set by `jset`
+
+example:
+```javascript
+const nestedObj = {
+  a: 'aaaa:bbbb',
+  b: new Date(2021, 7, 7),
+  c: false,
+  d: 1,
+  e: {
+    a: 'aaaa:bbbb',
+    b: new Date(2021, 7, 7),
+    c: true,
+    d: 1,
+    f: null,
+    g: undefined,
+    h: {
+      a: 'aaaa:bbbb',
+      b: new Date(2021, 7, 7),
+      c: true,
+      d: 1,
+      f: null,
+      g: undefined,
+      h: ['aaa', 123, false, true, false, new Date(2021, 7, 7), null, undefined]
+    }
+  },
+  f: null,
+  g: undefined,
+  h: ['aaa', 123, false, true, false, new Date(2021, 7, 7), null, undefined]
+}
+
+;(async () => {
+  let jset = await redis.jset('jest_jset_nested_obj', nestedObj);
+  let jget = await redis.jget('jest_jset_nested_obj');
+})()
+```
+This nested JSON will set in Redis Hash like (run cmd in terminal):
+```shell
+127.0.0.1:6379[15]> hgetall jest_jset_nested_obj
+1) "a"
+2) "s:aaaa:bbbb"
+3) "b"
+4) "d:2021-08-06T17:00:00.000Z"
+5) "c"
+6) "b:false"
+7) "d"
+8) "n:1"
+9) "e.a"
+10) "s:aaaa:bbbb"
+11) "e.b"
+12) "d:2021-08-06T17:00:00.000Z"
+13) "e.c"
+14) "b:true"
+15) "e.d"
+16) "n:1"
+17) "e.f"
+18) "nu"
+19) "e.g"
+20) "u"
+21) "e.h.a"
+22) "s:aaaa:bbbb"
+23) "e.h.b"
+24) "d:2021-08-06T17:00:00.000Z"
+25) "e.h.c"
+26) "b:true"
+27) "e.h.d"
+28) "n:1"
+29) "e.h.f"
+30) "nu"
+31) "e.h.g"
+32) "u"
+33) "e.h.h.0"
+34) "s:aaa"
+35) "e.h.h.1"
+36) "n:123"
+37) "e.h.h.2"
+38) "b:false"
+39) "e.h.h.3"
+40) "b:true"
+41) "e.h.h.4"
+42) "b:false"
+43) "e.h.h.5"
+44) "d:2021-08-06T17:00:00.000Z"
+45) "e.h.h.6"
+46) "nu"
+47) "e.h.h.7"
+48) "u"
+49) "f"
+50) "nu"
+51) "g"
+52) "u"
+53) "h.0"
+54) "s:aaa"
+55) "h.1"
+56) "n:123"
+57) "h.2"
+58) "b:false"
+59) "h.3"
+60) "b:true"
+61) "h.4"
+62) "b:false"
+63) "h.5"
+64) "d:2021-08-06T17:00:00.000Z"
+65) "h.6"
+66) "nu"
+67) "h.7"
+68) "u"
+```
 
 ## Event
 |Event| Description  |
