@@ -26,6 +26,7 @@ const EVENT_KEYEVENT = 'keyevent';
 
 const PATTERN_NOTIFICATION = '__key*__:*';
 const SET_NOTIFY_EVENT = 'KEA';
+const keyTempArray = '__tmpArray__';
 
 const regexIgnoreDelAll = /^\*+$/g;
 const noop = () => {}
@@ -126,7 +127,7 @@ function stringifyValue(value) {
       if (value === null) return `nu`;
       break;
     default:
-      return `${typeof value}:${value}`
+      return `${value}`
   }
 }
 
@@ -790,18 +791,22 @@ class RedisExtend extends Redis {
     return processDelPattern(callback);
   }
 
-  async jset (key, json, callback) {
+  async jset (key, obj, callback) {
     let res = -1;
 
-    if (!json || typeof json !== 'object' || Array.isArray(json)) {
+    if (!obj || typeof obj !== 'object') {
       return callback ? callback(null, res) : res;
     }
 
-    let args = [key];
-    json = flatten(json);
+    if (Array.isArray(obj)) {
+      obj = { [keyTempArray]: obj };
+    }
 
-    Object.keys(json).forEach(field => {
-      let value = stringifyValue(json[field]);
+    let args = [key];
+    obj = flatten(obj);
+
+    Object.keys(obj).forEach(field => {
+      let value = stringifyValue(obj[field]);
       args = [...args, field, value];
     });
 
@@ -822,6 +827,8 @@ class RedisExtend extends Redis {
     });
 
     json = flatten.unflatten(json);
+
+    if (json[keyTempArray]) json = json[keyTempArray];
 
     return callback ? callback(null, json) : json;
   }

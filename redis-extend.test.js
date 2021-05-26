@@ -64,6 +64,13 @@ const nestedObj = {
   h: ['aaa', 123, false, true, false, new Date(2021, 7, 7), null, undefined]
 }
 
+const array = ['aaa', 123, false, true, false, new Date(2021, 7, 7), null, undefined, {
+  a: 'aaaa:bbbb',
+  b: new Date(2021, 7, 7),
+  c: false,
+  d: 1
+}];
+
 beforeAll(async () => {
   console.log('beforeAll: flush db 15 ...');
   // Clears the database
@@ -494,6 +501,19 @@ describe('Other', () => {
     let jget = await redis.jget('jest_xxxx');
 
     expect(jget).toBe(-1);
+  })
+
+  test('jset: set array in hash', async () => {
+    let jset = await redis.jset('jest_jset_array', array);
+
+    expect(jset).toBeGreaterThanOrEqual(0);
+  })
+
+  test('jget: get nested json object', async () => {
+    let jset = await redis.jset('jest_jset_array', array);
+    let jget = await redis.jget('jest_jset_array');
+
+    expect(jget).toMatchObject(array);
   })
 })
 
