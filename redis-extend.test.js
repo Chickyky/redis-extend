@@ -84,6 +84,7 @@ afterAll(async () => {
   console.log('afterAll: close connection ...');
   // Clears the database
   await redis.quit();
+  await redis.disconnect();
 });
 
 describe('Hash', () => {
@@ -500,7 +501,7 @@ describe('Other', () => {
   test('jget: get key not exists', async () => {
     let jget = await redis.jget('jest_xxxx');
 
-    expect(jget).toBe(-1);
+    expect(jget).toBe(null);
   })
 
   test('jset: set array in hash', async () => {

@@ -819,7 +819,7 @@ class RedisExtend extends Redis {
     let json = await this.hgetall(key);
 
     if (!json || !Object.keys(json).length) {
-      return callback ? callback(null, -1) : -1;
+      return callback ? callback(null, null) : null;
     }
 
     Object.keys(json).forEach(field => {
