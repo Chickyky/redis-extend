@@ -27,16 +27,17 @@ const EVENT_KEYEVENT = 'keyevent';
 const PATTERN_NOTIFICATION = '__key*__:*';
 const SET_NOTIFY_EVENT = 'KEA';
 const keyTempArray = '__tmpArray__';
+const separate = ':$$:';
 
 const regexIgnoreDelAll = /^\*+$/g;
 const noop = () => {}
 
 function parseChunk (chunk) {
   let [keyName, value] = chunk;
-  let [type, key, ...field] = keyName.split(':');
+  let [type, key, ...field] = keyName.split(separate);
 
   value = Number(value);
-  field = field.join(':');
+  field = field.join(separate);
 
   return {
     zMemberName: keyName,
@@ -277,7 +278,7 @@ class RedisExtend extends Redis {
   }
 
   expireKey (type, key, field) {
-    return `${type}:${key}:${field}`;
+    return [type, key, field].join(separate);
   }
 
   keyTTL (type, key, field) {
